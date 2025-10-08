@@ -5,8 +5,8 @@ public class AICar : MonoBehaviour
     public Transform[] waypoints;
     private int currentWaypointIndex = 0;
     public float speed = 10f;
-
-
+    public float rotationSpeed = 5f;
+    
     // Update is called once per frame
     void Update()
     {
@@ -16,7 +16,7 @@ public class AICar : MonoBehaviour
 
         Quaternion lookRotation = Quaternion.LookRotation(direction);
 
-        transform.rotation = lookRotation;
+        transform.rotation = Quaternion.Slerp(transform.rotation,lookRotation,rotationSpeed * Time.deltaTime);
 
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
 
