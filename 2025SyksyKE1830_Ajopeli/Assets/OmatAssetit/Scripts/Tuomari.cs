@@ -4,6 +4,8 @@ public class Tuomari : MonoBehaviour
 {
     public TMP_Text resultText;
 
+    public int kierostenMaara = 3;
+
     private bool winnerDeclared = false;
     
     private void Start()
@@ -15,7 +17,15 @@ public class Tuomari : MonoBehaviour
     {
         CarIdentify id = car.GetComponent<CarIdentify>();
 
-        string winnerName = id.displayName;
+        if(id == null)
+        {
+            return;
+        }
+
+        LapCounter lap = car.GetComponent<LapCounter>();
+
+
+        //string winnerName = id.displayName;
         
         if(id.kind == CarKind.Player)
         {
@@ -31,11 +41,19 @@ public class Tuomari : MonoBehaviour
                 Debug.Log("Pelaaja ylitti maaliviivan, mutta kaikki checkpointit eivät ole kunnossa -> ei voittoa!");
                 return;
             }
+            int tmpLap =lap.lapsCompleted;
+            validator.UpdateLapsText(tmpLap +1,kierostenMaara);
+            validator.ResetLap();
         }
-        if(winnerDeclared == false)
+
+        lap.lapsCompleted++;
+
+        if(winnerDeclared == false && lap.lapsCompleted >= kierostenMaara )
         {
+            string winnerName = id.displayName;
             winnerDeclared = true;
             resultText.text = $"WINNER: {winnerName}";
+            GameManager.Instance.Phase = RacePhase.Finished;
             //Debug.Log($"WINNER: {winnerName}");
         }
     }
